@@ -25,7 +25,7 @@ gender, gdp, population, age and generation.
 - `gdp_per_capita ($)`
 - `generation`
 
-## Research Questoins
+## Research Questions
 
 Based on the information available we assume there to be a correlation between
 gdp per capita and the number of suicides in a country. There should also be
