@@ -51,4 +51,28 @@ ggplot(data = data3, mapping = aes(x = count, y = country)) +
   geom_point() +
   scale_x_continuous(breaks = seq(0, 35, 5))
 
-  
+## Test: Plotting suicide vs. gdp per capita (plotting pretty much all rows)
+
+data4 <- data %>%
+  group_by(country, year, suicides.100k.pop, gdp_per_capita....) %>%
+  summarize(n())
+
+data4 <- as_tibble(data4)
+
+ggplot(data = data4, mapping = aes(x = gdp_per_capita...., y = suicides.100k.pop)) +
+  geom_point(alpha = 0.25) + theme(legend.position="none") +
+  geom_smooth()
+
+## The right way
+
+data5 <- data4 %>%
+  group_by(country, year) %>%
+  mutate(total_suicides_100k_pop = sum(suicides.100k.pop)) %>%
+  group_by(country, year, total_suicides_100k_pop, gdp_per_capita....) %>%
+  summarize(count = n())
+
+data5 <- as_tibble(data5)
+
+ggplot(data = data5, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
+  geom_point(alpha = 0.25) + theme(legend.position="none") +
+  geom_smooth()
