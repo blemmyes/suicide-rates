@@ -20,7 +20,7 @@ data2 <- data %>%
   group_by(country, year) %>%
   summarize(n())
 
-data2 <- as_tibble()
+data2 <- as_tibble(data2)
 
 ## Plot has year (yes/no) per country (y) vs time (x)
 ## Note that some countries have two entries in year ~ 2015
