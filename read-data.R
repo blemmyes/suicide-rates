@@ -8,12 +8,15 @@ read_suicide_data <- function(csv_file_path) {
     return(tbbl)
 }
 
-data <- read_suicide_data('data/master.csv')
+data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
 ## On Mac:
 data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
 
 ## data: 1 observation per year per country per sex per age
 
+## Larissa needs this!
+print(data)
+data <- data %>% rename(country = �..country)
 print(data)
 
 ## Preparing data: Summarize year (1 observation per every year per country)
@@ -30,12 +33,30 @@ data2 <- as_tibble(data2)
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
   geom_bin2d()
 
-## V2 with tiles(): returns true/fals color mapping
+## V2 with tiles(): returns true/false color mapping
 
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
   geom_tile()
 
 ## data3: How many entries per country? (number of years)
+## Delete countrys with too few suicides
+data_clean <- data %>%
+  group_by(country, year) %>%
+  summarize(n())
+
+data1_clean <- data_clean %>%
+  group_by(country) %>%
+  summarize(n())
+
+print(data1_clean)
+
+#data_clean <- dplyr::filter(data_clean, !grepl('Albania|Uzbekistan', country))
+
+ggplot(data = data_clean, mapping = aes(x = year, y = country)) +
+  geom_bin2d()
+
+
+## How many entries per country? (number of years)
 
 data3 <- data2 %>%
   group_by(country) %>%

@@ -1,0 +1,3 @@
+## Data Cleaning
+The first step in a data science project is the data investigation and data cleaning. The following ggplot shows,
+how many suicides per year and per country happend.
