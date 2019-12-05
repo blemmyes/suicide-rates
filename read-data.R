@@ -8,6 +8,7 @@ read_suicide_data <- function(csv_file_path) {
     return(tbbl)
 }
 
+## On Windows:
 data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
 ## On Mac:
 data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
@@ -19,7 +20,7 @@ print(data)
 data <- data %>% rename(country = �..country)
 print(data)
 
-## Preparing data: Summarize year (1 observation per every year per country)
+## data2: Summarize year (1 observation per every year per country)
 
 data2 <- data %>%
   group_by(country, year) %>%
@@ -50,7 +51,7 @@ data1_clean <- data_clean %>%
 
 print(data1_clean)
 
-#data_clean <- dplyr::filter(data_clean, !grepl('Albania|Uzbekistan', country))
+## data_clean <- dplyr::filter(data_clean, !grepl('Albania|Uzbekistan', country))
 
 ggplot(data = data_clean, mapping = aes(x = year, y = country)) +
   geom_bin2d()
@@ -121,9 +122,28 @@ ggplot(data = data6, mapping = aes(x = gdp_per_capita...., y = total_suicides_10
   geom_point(alpha = 0.25) + theme(legend.position="none") +
   geom_smooth()
 
-## TODO: Clustering
+## Clustering
 
 library(cluster)
 library(factoextra)
 
+head(data6) # Problem: 'country' has to be an index, not rowname
 
+d6_scale <- data6
+
+d6_scale <- d6_scale %>%
+  remove_rownames() %>%
+  column_to_rownames(var = 'country')
+
+## normalize data!
+
+d6_scale$total_suicides_100k_pop <- scale(d6_scale$total_suicides_100k_pop)
+d6_scale$gdp_per_capita.... <- scale(d6_scale$gdp_per_capita....)
+
+clusters <- kmeans(d6_scale, centers=4, nstart = 25)
+
+str(clusters)
+
+clusters
+
+fviz_cluster(clusters, data = d6_scale)
