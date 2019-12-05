@@ -10,11 +10,13 @@ read_suicide_data <- function(csv_file_path) {
 
 data <- read_suicide_data('data/master.csv')
 ## On Mac:
-# data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
+data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
+
+## data: 1 observation per year per country per sex per age
 
 print(data)
 
-## Preparing data: Summarize year (one row per every year per every country)
+## Preparing data: Summarize year (1 observation per every year per country)
 
 data2 <- data %>%
   group_by(country, year) %>%
@@ -33,7 +35,7 @@ ggplot(data = data2, mapping = aes(x = year, y = country)) +
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
   geom_tile()
 
-## How many entries per country? (number of years)
+## data3: How many entries per country? (number of years)
 
 data3 <- data2 %>%
   group_by(country) %>%
@@ -41,15 +43,26 @@ data3 <- data2 %>%
 
 data3 <- as_tibble(data3)
 
-## what is the max? 32
+plot(data3)
+
+## A closer look at the data quality: Show with a histogram the number of observations each country has
+
+ggplot(data = data3, mapping = aes(count)) +
+  geom_histogram(binwidth = 1) +
+  scale_x_continuous(breaks = seq(1, 35, 1)) +
+  xlab("number of years with suicides") +
+  ylab("number of countries")
+
+## what is the max? 32. Some countries have 32 observations / data about suicide from 32 different years
 
 max(data3$count)
 
+## TODO: print top ten countries (with the most number of observations)
+
 ## Plot number of different years per country with custom ticks
 
-ggplot(data = data3, mapping = aes(x = count, y = country)) +
-  geom_point() +
-  scale_x_continuous(breaks = seq(0, 35, 5))
+ggplot(data = data3, mapping = aes(x = country, y = count)) +
+  geom_point() + theme(axis.text.x=element_text(angle = 90, hjust = 1, vjust=+0.25))
 
 ## Test: Plotting suicide vs. gdp per capita (plotting pretty much all rows)
 
@@ -63,7 +76,7 @@ ggplot(data = data4, mapping = aes(x = gdp_per_capita...., y = suicides.100k.pop
   geom_point(alpha = 0.25) + theme(legend.position="none") +
   geom_smooth()
 
-## The right way
+## The right way: Plotting 1 observation per every year per every country vs corresponding gdp per capita
 
 data5 <- data4 %>%
   group_by(country, year) %>%
@@ -76,3 +89,20 @@ data5 <- as_tibble(data5)
 ggplot(data = data5, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
   geom_smooth()
+
+## Computed 1 observation per country with average of suicides and average of gdp over all years
+
+data6 <- data5 %>%
+  group_by(country) %>%
+  summarize(total_suicides_100k_pop = mean(total_suicides_100k_pop), gdp_per_capita.... = mean(gdp_per_capita....))
+
+ggplot(data = data6, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
+  geom_point(alpha = 0.25) + theme(legend.position="none") +
+  geom_smooth()
+
+## TODO: Clustering
+
+library(cluster)
+library(factoextra)
+
+
