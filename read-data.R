@@ -9,16 +9,19 @@ read_suicide_data <- function(csv_file_path) {
 }
 
 ## On Windows:
-data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
+# data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
 ## On Mac:
-data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
+# data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
+## Everywhere:
+## just make sure the project dir is your working dir
+data <- read_suicide_data('./data/master.csv')
 
 ## data: 1 observation per year per country per sex per age
 
 ## Larissa needs this!
-print(data)
-data <- data %>% rename(country = �..country)
-print(data)
+#print(data)
+#data <- data %>% rename(country = �..country)
+#print(data)
 
 ## data2: Summarize year (1 observation per every year per country)
 
@@ -32,12 +35,16 @@ data2 <- as_tibble(data2)
 ## Note that some countries have two entries in year ~ 2015
 
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
-  geom_bin2d()
+    theme(tex = element_text(size=6)) +
+    geom_bin2d()
 
 ## V2 with tiles(): returns true/false color mapping
-
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
-  geom_tile()
+    theme(tex = element_text(size=6)) +
+    xlab("Year") +
+    ylab("Country") +
+    geom_tile()
+ggsave('doc/1-available-data.png', dpi = 300)
 
 ## data3: How many entries per country? (number of years)
 ## Delete countrys with too few suicides
@@ -72,8 +79,9 @@ plot(data3)
 ggplot(data = data3, mapping = aes(count)) +
   geom_histogram(binwidth = 1) +
   scale_x_continuous(breaks = seq(1, 35, 1)) +
-  xlab("number of years with suicides") +
-  ylab("number of countries")
+  xlab('Years with Data') +
+  ylab('Number of Countries')
+ggsave('doc/2-observations-histogram.png', dpi = 300)
 
 ## what is the max? 32. Some countries have 32 observations / data about suicide from 32 different years
 
@@ -84,7 +92,11 @@ max(data3$count)
 ## Plot number of different years per country with custom ticks
 
 ggplot(data = data3, mapping = aes(x = country, y = count)) +
-  geom_point() + theme(axis.text.x=element_text(angle = 90, hjust = 1, vjust=+0.25))
+    theme(tex = element_text(size=6)) +
+    geom_point() + theme(axis.text.x=element_text(angle = 90, hjust = 1, vjust=+0.25)) +
+    xlab('Country') +
+    ylab('Years with Data')
+ggsave('doc/3-years-with-data.png', dpi = 300)
 
 ## Test: Plotting suicide vs. gdp per capita (plotting pretty much all rows)
 
