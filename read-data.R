@@ -108,7 +108,10 @@ data4 <- as_tibble(data4)
 
 ggplot(data = data4, mapping = aes(x = gdp_per_capita...., y = suicides.100k.pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
-  geom_smooth()
+  geom_smooth() +
+  xlab('GDP per Capita') +
+  ylab('Suicides (per 100k Inhabitants)')
+ggsave('doc/4-regression-curve.png', dpi = 300)
 
 ## The right way: Plotting 1 observation per every year per every country vs corresponding gdp per capita
 
