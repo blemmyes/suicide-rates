@@ -108,10 +108,7 @@ data4 <- as_tibble(data4)
 
 ggplot(data = data4, mapping = aes(x = gdp_per_capita...., y = suicides.100k.pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
-  geom_smooth() +
-  xlab('GDP per Capita') +
-  ylab('Suicides (per 100k Inhabitants)')
-ggsave('doc/4-regression-curve.png', dpi = 300)
+  geom_smooth()
 
 ## The right way: Plotting 1 observation per every year per every country vs corresponding gdp per capita
 
@@ -125,7 +122,10 @@ data5 <- as_tibble(data5)
 
 ggplot(data = data5, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
-  geom_smooth()
+  geom_smooth() +
+  xlab('GDP per Capita') +
+  ylab('Suicides (per 100k Inhabitants)')
+ggsave('doc/4-regression-curve.png', dpi = 300)
 
 ## Computed 1 observation per country with average of suicides and average of gdp over all years
 
@@ -135,7 +135,11 @@ data6 <- data5 %>%
 
 ggplot(data = data6, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
-  geom_smooth()
+  geom_smooth() +
+  xlab('GDP per Capita') +
+  ylab('Suicides (per 100k Inhabitants)')
+ggsave('doc/5-another-regression-curve.png', dpi = 300)
+# TODO: what is the difference to the plot before?
 
 ## Clustering
 
@@ -161,4 +165,8 @@ str(clusters)
 
 clusters
 
-fviz_cluster(clusters, data = d6_scale)
+fviz_cluster(clusters, data = d6_scale, labelsize = 6,
+             xlab='Suicides (per 100k Inhabitangs)',
+             ylab='GDP per Capita', main='') +
+    theme(tex = element_text(size=6))
+ggsave('doc/6-cluster.png', dpi = 300)
