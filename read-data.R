@@ -197,3 +197,33 @@ clusters_visualized2 <- fviz_cluster(clusters_unscale, data = data6)
 clusters_visualized2
 
 ## TODO: Denormalization does not work
+
+## Plotting time series
+
+## Creating a dataset only from specific countries
+
+data5_selection <- data5 %>%
+  filter(
+    country %in% c("Switzerland", "United States", "Jamaica", "Japan", "Luxembourg" )
+  )
+
+library(tidyquant)
+library(timetk)
+library(sweep)
+library(forecast)
+
+data5_selection %>%
+  ggplot(aes(x = year, y = total_suicides_100k_pop, color = country)) +
+  geom_line() +
+  labs(title = "Plotting Countries: Suicides per 100k pop", x = "year", y = "Total Suicides per 100k pop",
+       subtitle = "") +
+  scale_y_continuous() +
+  theme_tq()
+
+data5_selection %>%
+  ggplot(aes(x = year, y = gdp_per_capita...., color = country)) +
+  geom_line() +
+  labs(title = "Plotting Countries: GDP per capita", x = "year", y = "GDP per capita",
+       subtitle = "") +
+  scale_y_continuous() +
+  theme_tq()
