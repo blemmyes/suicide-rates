@@ -227,3 +227,82 @@ data5_selection %>%
        subtitle = "") +
   scale_y_continuous() +
   theme_tq()
+
+## Regression
+
+## link: https://cfss.uchicago.edu/notes/linear-models/
+## link: https://r4ds.had.co.nz/model-basics.html
+
+library(broom)
+library(modelr)
+
+## Plotting a linear model (y ~ a*x + b)
+
+ggplot(data = data6, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
+  geom_point(alpha = 0.25) + theme(legend.position="none") +
+  geom_smooth(method = "lm") +
+  xlab('GDP per Capita') +
+  ylab('Suicides (per 100k Inhabitants)')
+## ggsave('doc/5-another-regression-curve.png', dpi = 300)
+
+## Estimating a linear model
+
+model1 <- lm(data6$total_suicides_100k_pop ~ data6$gdp_per_capita...., data = data6)
+coef(model1) ## coefficients (a, b)
+str(model1) ## this is NOT tidyverse
+model1_resid <- augment(model1) ## residuals
+model1_resid ## every residual (one residual per country)
+
+## Show coefficients of the model in the "tidy" way: (what is the p-value?)
+## (repetition p-value: testing the model against an intercept-only model)
+
+tidy(model1)
+
+tidy(model1) %>%
+  str()
+
+## Our model has a p-value of 0.686, which is slightly not significant on a level of 0.05.
+
+## Most important question: What is the value of R^2?
+## (repetition R^2: R^2 explains how much of the variance in the data the model is able to explain)
+
+glance(model1)
+
+## Our model has a R^2 0.00166, that means, only 0.166% of the variance gets explained with the model
+## -> there is probably no linear correlation
+
+## Idea: Maybe better narrow down the data instead of modelling a linear model after all mean values?
+
+data5_2015 <- data5 %>%
+  filter(
+    year == "2015" )
+
+## There are 63 countries with records from 2015
+
+## Trying linear model again:
+
+model2_2015 <- lm(data5_2015$total_suicides_100k_pop ~ data5_2015$gdp_per_capita...., data = data5_2015)
+coef(model2_2015)
+str(model2_2015)
+model2_2015_resid <- augment(model2_2015) ## residuals
+model2_2015_resid ## every residual (one residual per country)
+
+tidy(model2_2015)
+
+tidy(model2_2015) %>%
+  str()
+
+## p-value is still slightly below 0.05...
+
+model2_glance <- glance(model2_2015)
+
+## R^2 is also very low
+## -> there is probably no linear correlation also for the year 2015
+
+## Output
+
+## link: https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
+
+library(xtable)
+
+xtable(model2_glance)
