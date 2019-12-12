@@ -9,18 +9,18 @@ read_suicide_data <- function(csv_file_path) {
 }
 
 ## On Windows:
-# data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
+data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
 ## On Mac:
 # data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
 ## Everywhere:
 ## just make sure the project dir is your working dir
-data <- read_suicide_data('./data/master.csv')
+#data <- read_suicide_data('./data/master.csv')
 
 ## data: 1 observation per year per country per sex per age
 
 ## Larissa needs this!
 #print(data)
-#data <- data %>% rename(country = ï¿½..country)
+data <- data %>% rename(country = ï..country)
 #print(data)
 
 ## data2: Summarize year (1 observation per every year per country)
@@ -46,11 +46,14 @@ ggplot(data = data2, mapping = aes(x = year, y = country)) +
     geom_tile()
 ggsave('doc/1-available-data.png', dpi = 300)
 
-## data3: How many entries per country? (number of years)
+
 ## Delete countrys with too few suicides
+
 data_clean <- data %>%
   group_by(country, year) %>%
   summarize(n())
+
+print(data_clean)
 
 data1_clean <- data_clean %>%
   group_by(country) %>%
@@ -58,12 +61,14 @@ data1_clean <- data_clean %>%
 
 print(data1_clean)
 
-## data_clean <- dplyr::filter(data_clean, !grepl('Albania|Uzbekistan', country))
+data1_clean<-data1_clean[order(-data1_clean$`n()`),]
+print(data1_clean)
 
-ggplot(data = data_clean, mapping = aes(x = year, y = country)) +
-  geom_bin2d()
+data_full_clean <- data1_clean %>% filter(data1_clean$'n()'>=10)
+print(data_full_clean)
 
 
+## data3: How many entries per country? (number of years)
 ## How many entries per country? (number of years)
 
 data3 <- data2 %>%
