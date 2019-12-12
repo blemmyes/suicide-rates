@@ -2,6 +2,8 @@
 
 % packages
 \usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{hyperref}
 \usepackage{fontspec}
     \setmainfont{Vollkorn}
     \setsansfont{Lato}
@@ -11,12 +13,24 @@
 \renewcommand{\baselinestretch}{1.25}
 \pagestyle{headings}
 
+% convenient macros
+\newcommand{\imgref}[1]{{\ref{#1} \textit{\nameref{#1}} (p. \pageref{#1})}}
+
 \begin{document}
 
-\input{title.tex}
+\input{0-title.tex}
+\input{1-research-question.tex}
 \newpage
 
 \tableofcontents
 \newpage
+
+\input{2-data.tex}
+\newpage
+
+\input{3-analysis.tex}
+\newpage
+
+\listoffigures
 
 \end{document}

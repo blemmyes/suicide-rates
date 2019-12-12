@@ -12,13 +12,16 @@ read_suicide_data <- function(csv_file_path) {
 data <- read_suicide_data('C:\\Users\\Larissa\\Documents\\GitHub\\suicide-rates\\data\\master.csv')
 ## On Mac:
 data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple~CloudDocs/HSLU/07 HS19/DASB/Projekt/suicide-rates/data/master.csv') #
+## Everywhere:
+## just make sure the project dir is your working dir
+## data <- read_suicide_data('./data/master.csv')
 
 ## data: 1 observation per year per country per sex per age
 
 ## Larissa needs this!
-print(data)
-data <- data %>% rename(country = �..country)
-print(data)
+## print(data)
+data <- data %>% rename(country = ?..country)
+## print(data)
 
 ## data2: Summarize year (1 observation per every year per country)
 
@@ -32,18 +35,25 @@ data2 <- as_tibble(data2)
 ## Note that some countries have two entries in year ~ 2015
 
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
-  geom_bin2d()
+    theme(tex = element_text(size=6)) +
+    geom_bin2d()
 
 ## V2 with tiles(): returns true/false color mapping
-
 ggplot(data = data2, mapping = aes(x = year, y = country)) +
-  geom_tile()
+    theme(tex = element_text(size=6)) +
+    xlab("Year") +
+    ylab("Country") +
+    geom_tile()
+ggsave('doc/1-available-data.png', dpi = 300)
 
-## data3: How many entries per country? (number of years)
+
 ## Delete countrys with too few suicides
+
 data_clean <- data %>%
   group_by(country, year) %>%
   summarize(n())
+
+print(data_clean)
 
 data1_clean <- data_clean %>%
   group_by(country) %>%
@@ -51,12 +61,14 @@ data1_clean <- data_clean %>%
 
 print(data1_clean)
 
-## data_clean <- dplyr::filter(data_clean, !grepl('Albania|Uzbekistan', country))
+data1_clean<-data1_clean[order(-data1_clean$`n()`),]
+print(data1_clean)
 
-ggplot(data = data_clean, mapping = aes(x = year, y = country)) +
-  geom_bin2d()
+data_full_clean <- data1_clean %>% filter(data1_clean$'n()'>=10)
+print(data_full_clean)
 
 
+## data3: How many entries per country? (number of years)
 ## How many entries per country? (number of years)
 
 data3 <- data2 %>%
@@ -72,8 +84,9 @@ plot(data3)
 ggplot(data = data3, mapping = aes(count)) +
   geom_histogram(binwidth = 1) +
   scale_x_continuous(breaks = seq(1, 35, 1)) +
-  xlab("number of years with suicides") +
-  ylab("number of countries")
+  xlab('Years with Data') +
+  ylab('Number of Countries')
+ggsave('doc/2-observations-histogram.png', dpi = 300)
 
 ## what is the max? 32. Some countries have 32 observations / data about suicide from 32 different years
 
@@ -84,7 +97,11 @@ max(data3$count)
 ## Plot number of different years per country with custom ticks
 
 ggplot(data = data3, mapping = aes(x = country, y = count)) +
-  geom_point() + theme(axis.text.x=element_text(angle = 90, hjust = 1, vjust=+0.25))
+    theme(tex = element_text(size=6)) +
+    geom_point() + theme(axis.text.x=element_text(angle = 90, hjust = 1, vjust=+0.25)) +
+    xlab('Country') +
+    ylab('Years with Data')
+ggsave('doc/3-years-with-data.png', dpi = 300)
 
 ## Test: Plotting suicide vs. gdp per capita (plotting pretty much all rows)
 
@@ -110,7 +127,10 @@ data5 <- as_tibble(data5)
 
 ggplot(data = data5, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
-  geom_smooth()
+  geom_smooth() +
+  xlab('GDP per Capita') +
+  ylab('Suicides (per 100k Inhabitants)')
+ggsave('doc/4-regression-curve.png', dpi = 300)
 
 ## Computed 1 observation per country with average of suicides and average of gdp over all years
 
@@ -120,7 +140,11 @@ data6 <- data5 %>%
 
 ggplot(data = data6, mapping = aes(x = gdp_per_capita...., y = total_suicides_100k_pop)) +
   geom_point(alpha = 0.25) + theme(legend.position="none") +
-  geom_smooth()
+  geom_smooth() +
+  xlab('GDP per Capita') +
+  ylab('Suicides (per 100k Inhabitants)')
+ggsave('doc/5-another-regression-curve.png', dpi = 300)
+## TODO: what is the difference to the plot before?
 
 ## Clustering
 
@@ -148,7 +172,14 @@ clusters
 
 clusters_visualized <- fviz_cluster(clusters, data = d6_scale)
 
+clusters_visualized2 <- fviz_cluster(clusters, data = d6_scale, labelsize = 6,
+                                     xlab='Suicides (per 100k Inhabitangs)',
+                                     ylab='GDP per Capita', main='') +
+  theme(tex = element_text(size=6))
+ggsave('doc/6-cluster.png', dpi = 300)
+
 clusters_visualized
+clusters_visualized2
 
 ## Problem: Data is still normalized!
 
@@ -165,4 +196,4 @@ clusters_visualized2 <- fviz_cluster(clusters_unscale, data = data6)
 
 clusters_visualized2
 
-## TODO: Does not work
+## TODO: Denormalization does not work
