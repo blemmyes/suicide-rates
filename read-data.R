@@ -137,8 +137,8 @@ d6_scale <- d6_scale %>%
 
 ## normalize data!
 
-d6_scale$total_suicides_100k_pop <- scale(d6_scale$total_suicides_100k_pop)
-d6_scale$gdp_per_capita.... <- scale(d6_scale$gdp_per_capita....)
+d6_scale$total_suicides_100k_pop <- scale(d6_scale$total_suicides_100k_pop, center= TRUE, scale=TRUE)
+d6_scale$gdp_per_capita.... <- scale(d6_scale$gdp_per_capita...., center= TRUE, scale=TRUE)
 
 clusters <- kmeans(d6_scale, centers=4, nstart = 25)
 
@@ -146,4 +146,23 @@ str(clusters)
 
 clusters
 
-fviz_cluster(clusters, data = d6_scale)
+clusters_visualized <- fviz_cluster(clusters, data = d6_scale)
+
+clusters_visualized
+
+## Problem: Data is still normalized!
+
+clusters_unscale <- clusters
+
+clusters_unscale$centers[,1] <- clusters$centers[,1] * attr(d6_scale$total_suicides_100k_pop, 'scaled:scale') + attr(d6_scale$total_suicides_100k_pop, 'scaled:center')
+clusters_unscale$centers[,2] <- clusters$centers[,2] * attr(d6_scale$gdp_per_capita...., 'scaled:scale') + attr(d6_scale$gdp_per_capita...., 'scaled:center')
+
+data6 <- data6 %>%
+  remove_rownames() %>%
+  column_to_rownames(var = 'country')
+
+clusters_visualized2 <- fviz_cluster(clusters_unscale, data = data6)
+
+clusters_visualized2
+
+## TODO: Does not work
