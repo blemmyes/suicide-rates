@@ -31,6 +31,8 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                         mainPanel(plotOutput(outputId='gdpPerCapita', height=height)))),
                  tabPanel('Clustering',
                           sidebarLayout(sidebarPanel(h1('Clustering'),
+                                                     p('This slider...'),
+                                                     sliderInput('nClusters', 'Clusters', 2, 10, 4),
                                                      p('This plot...')),
                                         mainPanel(plotOutput(outputId='clustering', height=height))))
 )
@@ -52,7 +54,6 @@ clustered <- suicide_gdp %>%
     column_to_rownames(var='country')
 clustered$total_suicides_100k_pop <- scale(clustered$total_suicides_100k_pop, center=TRUE, scale=TRUE)
 clustered$gdp_per_capita.... <- scale(clustered$gdp_per_capita...., center=TRUE, scale=TRUE)
-clusters <- kmeans(clustered, centers=4, nstart=25)
 
 server <- function(input, output) {
     max <- max(by_country$count)
@@ -77,10 +78,13 @@ server <- function(input, output) {
                                       geom_smooth() +
                                       xlab('GDP per Capita') +
                                       ylab('Suicides (per 100k Inhabitants)'))
-    output$clustering <- renderPlot(fviz_cluster(clusters, data=clustered,
-                                                 xlab='Suicides (per 100k Inhabitants)',
-                                                 ylab='GDP per Capita',
-                                                 main=''))
+    observeEvent(input$nClusters, {
+        clusters <- kmeans(clustered, centers=input$nClusters, nstart=25)
+        output$clustering <- renderPlot(fviz_cluster(clusters, data=clustered,
+                                                     xlab='Suicides (per 100k Inhabitants)',
+                                                     ylab='GDP per Capita',
+                                                     main=''))
+    })
 }
 
 shinyApp(ui=ui, server=server, options=list(port=1337))
