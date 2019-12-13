@@ -1,5 +1,7 @@
 #!/usr/bin/env Rscript
 
+library('cluster')
+library('factoextra')
 library('shiny')
 library('tidyverse')
 
@@ -26,7 +28,11 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                  tabPanel('GDP per Capita',
                           sidebarLayout(sidebarPanel(h1('GDP per Capita'),
                                                      p('This plot shows...')),
-                                        mainPanel(plotOutput(outputId='gdpPerCapita', height=height))))
+                                        mainPanel(plotOutput(outputId='gdpPerCapita', height=height)))),
+                 tabPanel('Clustering',
+                          sidebarLayout(sidebarPanel(h1('Clustering'),
+                                                     p('This plot...')),
+                                        mainPanel(plotOutput(outputId='clustering', height=height))))
 )
 
 data <- read_suicide_data('./data/master.csv')
@@ -39,6 +45,14 @@ suicide_gdp <- data %>%
     mutate(total_suicides_100k_pop=sum(suicides.100k.pop)) %>%
     group_by(country, year, total_suicides_100k_pop, gdp_per_capita....) %>%
     summarize(count=n())
+clustered <- suicide_gdp %>%
+    group_by(country) %>%
+    summarize(total_suicides_100k_pop=mean(total_suicides_100k_pop), gdp_per_capita....=mean(gdp_per_capita....)) %>%
+    remove_rownames() %>%
+    column_to_rownames(var='country')
+clustered$total_suicides_100k_pop <- scale(clustered$total_suicides_100k_pop, center=TRUE, scale=TRUE)
+clustered$gdp_per_capita.... <- scale(clustered$gdp_per_capita...., center=TRUE, scale=TRUE)
+clusters <- kmeans(clustered, centers=4, nstart=25)
 
 server <- function(input, output) {
     max <- max(by_country$count)
@@ -63,6 +77,10 @@ server <- function(input, output) {
                                       geom_smooth() +
                                       xlab('GDP per Capita') +
                                       ylab('Suicides (per 100k Inhabitants)'))
+    output$clustering <- renderPlot(fviz_cluster(clusters, data=clustered,
+                                                 xlab='Suicides (per 100k Inhabitants)',
+                                                 ylab='GDP per Capita',
+                                                 main=''))
 }
 
 shinyApp(ui=ui, server=server, options=list(port=1337))
