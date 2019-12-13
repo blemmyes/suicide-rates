@@ -11,7 +11,7 @@ read_suicide_data <- function(csv_file_path) {
     return(tbbl)
 }
 
-height <- '1024px'
+height <- '920px'
 ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                  tabPanel('Overview',
                           sidebarLayout(sidebarPanel(h1('Overview'),
@@ -34,13 +34,16 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      p('This slider...'),
                                                      sliderInput('nClusters', 'Clusters', 2, 10, 4),
                                                      p('This plot...')),
-                                        mainPanel(plotOutput(outputId='clustering', height=height))))
+                                        mainPanel(plotOutput(outputId='clustering', height=height)))),
+                 tabPanel('Conclusion', h1('Foobar'), p('foobar'))
 )
 
 data <- read_suicide_data('./data/master.csv')
 by_country_year <- data %>% group_by(country, year) %>% summarize(n())
-by_country <- by_country_year %>% group_by(country) %>% summarize(count=n())
-suicide_gdp <- data %>%
+by_country <- by_country_year %>% group_by(country) %>% summarize(count=n()) 
+valid_countries <- by_country %>% filter(by_country$count>=10) %>% select(country) %>% unlist() %>% as.character() %>% c()
+data_clean <- filter(data, country %in% valid_countries)
+suicide_gdp <- data_clean %>%
     group_by(country, year, suicides.100k.pop, gdp_per_capita....) %>%
     summarize(n()) %>%
     group_by(country, year) %>%
@@ -75,7 +78,7 @@ server <- function(input, output) {
                                              mapping=aes(x=gdp_per_capita...., y=total_suicides_100k_pop)) +
                                       geom_point(alpha=0.25) +
                                       theme(legend.position='none') +
-                                      geom_smooth() +
+                                      geom_smooth(method='lm') +
                                       xlab('GDP per Capita') +
                                       ylab('Suicides (per 100k Inhabitants)'))
     observeEvent(input$nClusters, {
