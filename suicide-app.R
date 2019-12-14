@@ -38,6 +38,10 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      sliderInput('nClusters', 'Clusters', 2, 10, 4),
                                                      p('This plot shows, how the different countries can be clustered together based on the number of suicides and the GDP per capita of the country. Between a cluster count of 4 and 7 Switzerland is in a cluster with Qatar, Luxembourg, Norway and Denmark. But interestingly Switzerland has the highest suicide rate of all countries in this cluster.')),
                                         mainPanel(plotOutput(outputId='clustering', height=height)))),
+                 tabPanel('Generation',
+                          sidebarLayout(sidebarPanel(h1('Generation'),
+                                                     p('TODO')),
+                                        mainPanel(plotOutput(outputId='generation', height=height)))),
                  tabPanel('Conclusion', h1('Foobar'), p('foobar'))
 )
 
@@ -60,6 +64,7 @@ clustered <- suicide_gdp %>%
     column_to_rownames(var='country')
 clustered$total_suicides_100k_pop <- scale(clustered$total_suicides_100k_pop, center=TRUE, scale=TRUE)
 clustered$gdp_per_capita.... <- scale(clustered$gdp_per_capita...., center=TRUE, scale=TRUE)
+suicide_generation = data_clean %>% group_by(generation, suicides.100k.pop)
 
 server <- function(input, output) {
     max <- max(by_country$count)
@@ -84,6 +89,11 @@ server <- function(input, output) {
                                       geom_smooth(method='lm') +
                                       xlab('GDP per Capita') +
                                       ylab('Suicides (per 100k Inhabitants)'))
+    output$generation <- renderPlot(ggplot(data=suicide_generation,
+                                           mapping=aes(x=generation, y=suicides.100k.pop)) +
+                                    geom_point(alpha=0.25) +
+                                    xlab('Generation') +
+                                    ylab('Suicides (per 100k Inhabitants)'))
     observeEvent(input$nClusters, {
         clusters <- kmeans(clustered, centers=input$nClusters, nstart=25)
         output$clustering <- renderPlot(fviz_cluster(clusters, data=clustered,
