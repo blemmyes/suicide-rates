@@ -40,7 +40,7 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                         mainPanel(plotOutput(outputId='clustering', height=height)))),
                  tabPanel('Generation',
                           sidebarLayout(sidebarPanel(h1('Generation'),
-                                                     p('TODO')),
+                                                     p('This plot shows the suicide rates grouped by generation.')),
                                         mainPanel(plotOutput(outputId='generation', height=height)))),
                  tabPanel('Generation over Years',
                           sidebarLayout(sidebarPanel(h1('Generation over Years'),
@@ -54,7 +54,7 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      p('In this chart all countries are taken together. For each generation (see in the legend) a timeseries is plotted in the line chart. The lineplot shows how many suicides there were for each generation over the years.'),
                                                      p('It shows, the last years (maybe from 2010) should not be taken in consideration as it seems to have missing data. But we can see for example that the G.I. generation had the last suicide in the year 2000. This makes sense when considering the G.I.\'s are around 100 years old in 2000! Also the newest generation, the generation Z, does not have so many ssuicides until now. The first ones happend around the year 2007 where the persons were around maximum 10 years old. It is intersting to see how normaly the suicide rate of each generation is tending to increase over the years.' )),
                                         mainPanel(plotOutput(outputId='generationOverYears', height=height)))),
-                 tabPanel('Conclusion', h1('Foobar'), p('foobar'))
+                 tabPanel('Conclusion', h1('Conclusion'), p('The data provided does not lead to the conclusion that there is a correlation between GDP per capita and the suicide rate of a country.'))
 )
 
 data <- read_suicide_data('./data/master.csv')
