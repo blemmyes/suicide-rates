@@ -42,6 +42,18 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                           sidebarLayout(sidebarPanel(h1('Generation'),
                                                      p('TODO')),
                                         mainPanel(plotOutput(outputId='generation', height=height)))),
+                 tabPanel('Generation over Years',
+                          sidebarLayout(sidebarPanel(h1('Generation over Years'),
+                                                     h4('Legend:'),
+                                                     p('Red = G.I. Generation (born in early 1900s - mid to late 1920s)'),
+                                                     p('Purple = Silent (born in mid 1920s - early 1940s)'),
+                                                     p('Blue = Boomern (born between 1946 - 1964)'),
+                                                     p('Green = Generation X (born between 1965 - 1975)'),
+                                                     p('Orange = Millenials (born between 1981 - 1998)'),
+                                                     p('Black = Generation Z (born between 1997 - 2012)'),
+                                                     p('In this chart all countries are taken together. For each generation (see in the legend) a timeseries is plotted in the line chart. The lineplot shows how many suicides there were for each generation over the years.'),
+                                                     p('It shows, the last years (maybe from 2010) should not be taken in consideration as it seems to have missing data. But we can see for example that the G.I. generation had the last suicide in the year 2000. This makes sense when considering the G.I.\'s are around 100 years old in 2000! Also the newest generation, the generation Z, does not have so many ssuicides until now. The first ones happend around the year 2007 where the persons were around maximum 10 years old. It is intersting to see how normaly the suicide rate of each generation is tending to increase over the years.' )),
+                                        mainPanel(plotOutput(outputId='generationOverYears', height=height)))),
                  tabPanel('Conclusion', h1('Foobar'), p('foobar'))
 )
 
@@ -65,6 +77,19 @@ clustered <- suicide_gdp %>%
 clustered$total_suicides_100k_pop <- scale(clustered$total_suicides_100k_pop, center=TRUE, scale=TRUE)
 clustered$gdp_per_capita.... <- scale(clustered$gdp_per_capita...., center=TRUE, scale=TRUE)
 suicide_generation = data_clean %>% group_by(generation, suicides.100k.pop)
+
+data_boom <- dplyr::filter(data, grepl('Boomer', generation))
+data_boom <- aggregate(data_boom$suicides_no, by=list(Year=data_boom$year), FUN=sum)
+data_gi <- dplyr::filter(data, grepl('G.I. Generation', generation))
+data_gi <- aggregate(data_gi$suicides_no, by=list(Year=data_gi$year), FUN=sum)
+data_genx <- dplyr::filter(data, grepl('Generation X', generation))
+data_genx <- aggregate(data_genx$suicides_no, by=list(Year=data_genx$year), FUN=sum)
+data_genz <- dplyr::filter(data, grepl('Generation Z', generation))
+data_genz <- aggregate(data_genz$suicides_no, by=list(Year=data_genz$year), FUN=sum)
+data_mill <- dplyr::filter(data, grepl('Millenials', generation))
+data_mill <- aggregate(data_mill$suicides_no, by=list(Year=data_mill$year), FUN=sum)
+data_silent <- dplyr::filter(data, grepl('Silent', generation))
+data_silent <- aggregate(data_silent$suicides_no, by=list(Year=data_silent$year), FUN=sum)
 
 server <- function(input, output) {
     max <- max(by_country$count)
@@ -94,6 +119,17 @@ server <- function(input, output) {
                                     geom_point(alpha=0.25) +
                                     xlab('Generation') +
                                     ylab('Suicides (per 100k Inhabitants)'))
+    output$generationOverYears <- renderPlot(ggplot() +
+                                               geom_line(data = data_gi, aes(x = Year, y = x), color = "red")+
+                                               geom_line(data = data_boom, aes(x=Year, y=x), color = "blue")+
+                                               geom_line(data = data_genx, aes(x=Year, y=x), color = "green")+
+                                               geom_line(data = data_genz, aes(x=Year, y=x), color = "black")+
+                                               geom_line(data = data_mill, aes(x=Year, y=x), color = "orange")+
+                                               geom_line(data = data_silent, aes(x=Year, y=x), color = "purple")+
+                                               xlab('Year')+
+                                               ylab('Count of suicides')+
+                                               scale_color_discrete(name = "Generations", labels = c("Generation G. I.", "Boomer", 'Generation X', "Generation Y", "Millenaials", "Silent")) +
+                                               geom_point())
     observeEvent(input$nClusters, {
         clusters <- kmeans(clustered, centers=input$nClusters, nstart=25)
         output$clustering <- renderPlot(fviz_cluster(clusters, data=clustered,

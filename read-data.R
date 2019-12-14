@@ -19,8 +19,8 @@ data <- read_suicide_data('/Users/fabianmeyer/Library/Mobile Documents/com~apple
 ## data: 1 observation per year per country per sex per age
 
 ## Larissa needs this!
-## print(data)
-data <- data %>% rename(country = ?..country)
+print(data)
+#data <- data %>% rename(country = ..country)
 ## print(data)
 
 ## data2: Summarize year (1 observation per every year per country)
@@ -67,6 +67,40 @@ print(data1_clean)
 data_full_clean <- data1_clean %>% filter(data1_clean$'n()'>=10)
 print(data_full_clean)
 
+print(data)
+
+data_boom <- dplyr::filter(data, grepl('Boomer', generation))
+data_boom <- aggregate(data_boom$suicides_no, by=list(Year=data_boom$year), FUN=sum)
+
+data_gi <- dplyr::filter(data, grepl('G.I. Generation', generation))
+data_gi <- aggregate(data_gi$suicides_no, by=list(Year=data_gi$year), FUN=sum)
+
+data_genx <- dplyr::filter(data, grepl('Generation X', generation))
+data_genx <- aggregate(data_genx$suicides_no, by=list(Year=data_genx$year), FUN=sum)
+
+data_genz <- dplyr::filter(data, grepl('Generation Z', generation))
+data_genz <- aggregate(data_genz$suicides_no, by=list(Year=data_genz$year), FUN=sum)
+
+data_mill <- dplyr::filter(data, grepl('Millenials', generation))
+data_mill <- aggregate(data_mill$suicides_no, by=list(Year=data_mill$year), FUN=sum)
+
+data_silent <- dplyr::filter(data, grepl('Silent', generation))
+data_silent <- aggregate(data_silent$suicides_no, by=list(Year=data_silent$year), FUN=sum)
+
+
+ggplot() +
+  geom_line(data = data_gi, aes(x = Year, y = x), color = "red")+
+  geom_line(data = data_boom, aes(x=Year, y=x), color = "blue")+
+  geom_line(data = data_genx, aes(x=Year, y=x), color = "green")+
+  geom_line(data = data_genz, aes(x=Year, y=x), color = "brown")+
+  geom_line(data = data_mill, aes(x=Year, y=x), color = "yellow")+
+  geom_line(data = data_silent, aes(x=Year, y=x), color = "purple")+
+  xlab('Year')+
+  ylab('Count of suicides')+
+  geom_point()
+
+
+print(data_gen)
 
 ## data3: How many entries per country? (number of years)
 ## How many entries per country? (number of years)
