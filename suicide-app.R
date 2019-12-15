@@ -15,29 +15,29 @@ height <- '920px'
 ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                  tabPanel('Overview',
                           sidebarLayout(sidebarPanel(h1('Overview'),
-                                                     p('The data for this project comes from the Kaggle website:'),
+                                                     p('The data for this project origins from the Kaggle website:'),
                                                      a('Suicide Rates Overview 1985 to 2016', 
                                                        href='https://www.kaggle.com/russellyates88/suicide-rates-overview-1985-to-2016/data'),
                                                      p(),
                                                      p('This data set contains data about suicides from different countries in different years. 
                                                        The data is further distinguished by age, generation, GDP, population and gender.'),
                                                      h4('Research questions:'),
-                                                     p('The hypothesis is, that based on the available information, there should be a correlation between the GDP per capita and the number of suicides in a country. 
+                                                     p('The hypothesis is, based on the available information, there should be a correlation between the GDP per capita and the number of suicides in a country. 
                                                        There should also be different suicide rates depending on the generation.'),
                                                      p('The diagram on the right hand side shows which country has data available for which years. 
                                                        Apparently, some countries have only few years covered. 
-                                                       These countries should not be taken into account when it comes to reason about the correlation, as those are not as meaningful as the other countries with more data available.')),
+                                                       These countries should not be taken into consideration when it comes to reason about the correlation, as those are not as significant as the other countries with more data available.')),
                                         mainPanel(plotOutput(outputId='overview', height=height)))),
                  tabPanel('Histogram',
                           sidebarLayout(sidebarPanel(h1('Histogram'),
                                                      p('To decide which countries should not be taken into consideration, we take a look at the histogram on the right hand side. 
                                                        It shows the number of years where data is available per country. 
-                                                       We decided to concentrate on countries which have at least 10 years of data.')),
+                                                       We decided to focus on countries with at least 10 years of data.')),
                                         mainPanel(plotOutput(outputId='histogram', height=height)))),
                  tabPanel('Country Data',
                           sidebarLayout(sidebarPanel(h1('Country Data'),
-                                                    p('In this figure we can see the count of years per country. 
-                                                      It shows that there are many countries with more than 20 years of data, and only a few that have a small amount of years covered. 
+                                                    p('On the right hand side, the count of years per country is visualized. 
+                                                      It shows that there are many countries with more than 20 years of data, only a few have a small amount of years covered. 
                                                       These are not useful for comparison.')),
                                        mainPanel(plotOutput(outputId='countryData', height=height)))),
                  tabPanel('GDP per Capita',
@@ -45,13 +45,13 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      withMathJax(p('This plot shows the correlation between the count of suicides per country and the GDP per capita. 
                                                                    As the blue line shows, there is no correlation between these two attributes. 
                                                                    The \\(R^2\\) score for this correlation is 0.00166 (p-value of 0.686), that means, only 0.166% of the variance gets explained with the model. 
-                                                                   This clearly shows no dependency, and the hypothesis of a correlation can be refuted.'))),
+                                                                   This clearly shows no dependency, and the hypothesis of a correlation can be refused.'))),
                                         mainPanel(plotOutput(outputId='gdpPerCapita', height=height)))),
                  tabPanel('Clustering',
                           sidebarLayout(sidebarPanel(h1('Clustering'),
                                                      p('With the slider below, different counts of clusters can be chosen.'),
                                                      sliderInput('nClusters', 'Clusters', 2, 10, 4),
-                                                     p('This plot shows how the different countries can be clustered together based on the number of suicides and the GDP per capita of the country. 
+                                                     p('This plot shows how the different countries can be clustered together, based on the number of suicides and the GDP per capita of the country. 
                                                        Between a cluster count of 4 and 7, Switzerland is in a cluster with Qatar, Luxembourg, Norway and Denmark. 
                                                        But interestingly, Switzerland has the highest suicide rate of all countries in this cluster.')),
                                         mainPanel(plotOutput(outputId='clustering', height=height)))),
@@ -59,7 +59,7 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                           sidebarLayout(sidebarPanel(h1('Generation'),
                                                      p('This plot shows the suicide rates grouped by generation. 
                                                        Each country is represented by a dot. 
-                                                       It is interesting to see that, the older a generation is, the higher the spread of suicide rates becomes.'),
+                                                       It is interesting to see that, the older a generation is, the wider the spread of suicide rates becomes.'),
                                                      h4('Legend:'),
                                                      p('Boomers (born between 1946 - 1964)'),
                                                      p('G.I. Generation (born in early 1900s - mid to late 1920s)'),
@@ -68,10 +68,10 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      p('Millenials (born between 1981 - 1998)'),
                                                      p('Silent (born in mid 1920s - early 1940s)'),
                                                      p('------------------------'),
-                                                     p('Possible reasons for this distribution can be seen in the next tab.')),
+                                                     p('Possible reasons for this distribution can be seen in the next tab, Generations over years.')),
                                         mainPanel(plotOutput(outputId='generation', height=height)))),
-                 tabPanel('Generation over Years',
-                          sidebarLayout(sidebarPanel(h1('Generation over Years'),
+                 tabPanel('Generations over years',
+                          sidebarLayout(sidebarPanel(h1('Generations over years'),
                                                      h4('Legend:'),
                                                      p('G.I. Generation (born in early 1900s - mid to late 1920s)', style='color:red'),
                                                      p('Silent (born in mid 1920s - early 1940s)', style='color:purple'),
@@ -80,29 +80,30 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      p('Millenials (born between 1981 - 1998)', style='color:orange'),
                                                      p('Generation Z (born between 1997 - 2012)'),
                                                      p('------------------------'),
-                                                     p('In this chart all countries are taken together. 
+                                                     p('In this chart, data of all countries is assembled. 
                                                        For every generation (see legend) a timeseries is plotted in the line chart. 
                                                        The line chart shows how many suicides there were for each generation over the years.'),
-                                                     p('This shows that the last years (maybe from 2010) should not be taken in consideration, as they seem to have missing data. 
+                                                     p('This shows that the last years (maybe from 2010) should not be taken into consideration, as they seem to have missing data. 
                                                        But we can see, for example, that the G.I. generation had the last suicide in the year 2000. 
                                                        This makes sense when considering the G.I.\'s are around 100 years old in 2000! 
-                                                       Also the youngest generation, generation Z, did not have so many suicides until now. 
-                                                       The first ones happened around the year 2007, where the persons were around maximum 10 years old. 
-                                                       It is intersting to see how normally the suicide rate of each generation is tending to increase over the years.')),
+                                                       Also the youngest generation, generation Z, did not have as many suicides until now. 
+                                                       The first suicides happened around the year 2007, where the persons were 10 years old, at the most. 
+                                                       It is intersting to see how regularly the suicide rate of each generation is tending to increase over the years.')),
                                         mainPanel(plotOutput(outputId='generationOverYears', height=height)))),
                  tabPanel('Conclusion', 
                           sidebarLayout(sidebarPanel(h1('Conclusion'), 
                                                      h4('Corellation GDP / suicide rate'),
                                                      p('The data provided does not lead to the conclusion that there is a correlation between GDP per capita and the suicide rate of a country.
-                                                       This means the hypotheses from the beginning is invalid.'), 
+                                                       This means the hypothesis from the beginning is invalid.'), 
                                                      h4('Suicide rate per generation'),
                                                      p('The second question about the suicide rate per generation is interesting. 
                                                        There is no year span where the suicide rate of all generation rises or drops. 
                                                        The different generation\'s suicide rates are independent from each other. 
                                                        Interestingly, you can see that the Millenials and the Generation Z have their first suicide at age of 10.'),
                                                      h4('Data inconsistency'),
-                                                     p('But as already seen in the plots before, there is a lot of missing data. 
-                                                       If the data set would be more consistent, more meaningful and correct statements could be made.')),
+                                                     p('But as already seen in the plots before, there is a lot of missing data.
+                                                        Even after cleaning up insignificant data, the data set remained inconsistent
+                                                        If the data set would be more consistent and contained more significant data, more meaningful and precise statements could be made.')),
                                         mainPanel(),
 )))
 
