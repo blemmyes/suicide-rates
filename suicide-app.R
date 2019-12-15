@@ -48,6 +48,7 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      p('Generation X (born between 1965 - 1975)'),
                                                      p('Millenials (born between 1981 - 1998)'),
                                                      p('Generation Z (born between 1997 - 2012)'),
+                                                     p('------------------------'),
                                                      p('Possible reasons for this distribution can be seen in the next tab.')),
                                         mainPanel(plotOutput(outputId='generation', height=height)))),
                  tabPanel('Generation over Years',
@@ -59,10 +60,12 @@ ui <- navbarPage('DASB: Suicide Rates', id='tabs',
                                                      p('Green = Generation X (born between 1965 - 1975)'),
                                                      p('Orange = Millenials (born between 1981 - 1998)'),
                                                      p('Black = Generation Z (born between 1997 - 2012)'),
+                                                     p('------------------------'),
                                                      p('In this chart all countries are taken together. For every generation (see in the legend) a timeseries is plotted in the line chart. The lineplot shows how many suicides there were for each generation over the years.'),
                                                      p('This shows that the last years (maybe from 2010) should not be taken in consideration as it seems to have missing data. But we can see, for example, that the G.I. generation had the last suicide in the year 2000. This makes sense when considering the G.I.\'s are around 100 years old in 2000! Also the youngest generation, generation Z, did not have so many suicides until now. The first ones happened around the year 2007 where the persons were around maximum 10 years old. It is intersting to see how normally the suicide rate of each generation is tending to increase over the years.')),
                                         mainPanel(plotOutput(outputId='generationOverYears', height=height)))),
-                 tabPanel('Conclusion', h1('Conclusion'), p('The data provided does not lead to the conclusion that there is a correlation between GDP per capita and the suicide rate of a country.'))
+                 tabPanel('Conclusion', h1('Conclusion'), p('The data provided does not lead to the conclusion that there is a correlation between GDP per capita and the suicide rate of a country. This means the hypotheses from the beginning is invalid. The second question about the siucide rate in the different generation is interesting. There is no year span where the suicide rate of all generation rises or drops. The different generation\'s suicide rates are independent from each other. Interestingly, you can see that the Millenials and the Generation Z have their first suicide at age of 10.'),
+                          p('But as already seen in the plots before, there are many missing data. If the data set would be more consistent, more meaningfull and correct statements could be made.'))
 )
 
 data <- read_suicide_data('./data/master.csv')
